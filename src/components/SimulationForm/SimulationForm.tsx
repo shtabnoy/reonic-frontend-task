@@ -6,11 +6,13 @@ import { DAYS_PER_MONTH } from '../../utils/common';
 interface SimulationFormProps {
   setTotalEnergyCharged: (value: number) => void;
   setTotalChargingEvents: (value: number) => void;
+  setEnergyConsumedPerPointPerHour: (value: number[][][]) => void;
 }
 
 export default function SimulationForm({
   setTotalEnergyCharged,
   setTotalChargingEvents,
+  setEnergyConsumedPerPointPerHour,
 }: SimulationFormProps) {
   const [numChargePoints, setNumChargePoints] = useState(4);
   const [multiplier, setMultiplier] = useState(100);
@@ -40,6 +42,7 @@ export default function SimulationForm({
     // Update state
     setTotalEnergyCharged(totalEnergy);
     setTotalChargingEvents(eventsPerMonth);
+    setEnergyConsumedPerPointPerHour(energyConsumedPerPointPerHour);
   }
 
   return (

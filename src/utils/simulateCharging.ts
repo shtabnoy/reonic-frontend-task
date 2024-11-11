@@ -54,20 +54,16 @@ export default function simulateCharging({
           const charge = Math.min(chargingPower, remainingCharge[cpIdx]);
           energyConsumedPerPointPerHour[dayIdx][hourIdx][cpIdx] = charge;
           remainingCharge[cpIdx] -= charge;
-
-          if (remainingCharge[cpIdx] === 0) {
-            completedChargingEvents[dayIdx]++;
-          }
         } else if (chargingEvents[dayIdx][hourIdx][cpIdx]) {
           // The car has arrived. We need to charge it from zero to full (carConsumption)
           remainingCharge[cpIdx] = carConsumption;
           const charge = Math.min(chargingPower, remainingCharge[cpIdx]);
           energyConsumedPerPointPerHour[dayIdx][hourIdx][cpIdx] = charge;
           remainingCharge[cpIdx] -= charge;
+        }
 
-          if (remainingCharge[cpIdx] === 0) {
-            completedChargingEvents[dayIdx]++;
-          }
+        if (remainingCharge[cpIdx] === 0) {
+          completedChargingEvents[dayIdx]++;
         }
       });
     });

@@ -4,6 +4,8 @@ import { SimulationForm, SimulationResult } from './components';
 function App() {
   const [totalEnergyCharged, setTotalEnergyCharged] = useState<number>(0);
   const [totalChargingEvents, setTotalChargingEvents] = useState<number>(0);
+  const [energyConsumedPerPointPerHour, setEnergyConsumedPerPointPerHour] =
+    useState<number[][][]>([]);
 
   return (
     <div className="container mx-auto p-4">
@@ -13,10 +15,12 @@ function App() {
       <SimulationForm
         setTotalEnergyCharged={setTotalEnergyCharged}
         setTotalChargingEvents={setTotalChargingEvents}
+        setEnergyConsumedPerPointPerHour={setEnergyConsumedPerPointPerHour}
       />
       <SimulationResult
         totalEnergyCharged={totalEnergyCharged}
         totalChargingEvents={totalChargingEvents}
+        energyConsumedPerPointPerHour={energyConsumedPerPointPerHour}
       />
     </div>
   );
