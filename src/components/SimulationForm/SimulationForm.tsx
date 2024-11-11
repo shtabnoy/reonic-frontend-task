@@ -2,17 +2,22 @@ import { useState } from 'react';
 import RangeInput from './RangeInput';
 import { simulateCharging } from '../../utils';
 import { DAYS_PER_MONTH } from '../../utils/common';
+import { SimulationData } from '../../types';
 
 interface SimulationFormProps {
   setTotalEnergyCharged: (value: number) => void;
   setTotalChargingEvents: (value: number) => void;
-  setEnergyConsumedPerPointPerHour: (value: number[][][]) => void;
+  setEnergyConsumedPerPointPerHour: (value: SimulationData) => void;
+  setChargingEventsPerPointPerHour: (value: SimulationData) => void;
+  setMaxPowerDemandPerPointPerHour: (value: SimulationData) => void;
 }
 
 export default function SimulationForm({
   setTotalEnergyCharged,
   setTotalChargingEvents,
   setEnergyConsumedPerPointPerHour,
+  setChargingEventsPerPointPerHour,
+  setMaxPowerDemandPerPointPerHour,
 }: SimulationFormProps) {
   const [numChargePoints, setNumChargePoints] = useState(4);
   const [multiplier, setMultiplier] = useState(100);
@@ -23,14 +28,18 @@ export default function SimulationForm({
     e.preventDefault();
 
     // Simulate
-    const { completedChargingEvents, energyConsumedPerPointPerHour } =
-      simulateCharging({
-        numChargePoints,
-        multiplier,
-        carConsumption,
-        chargingPower,
-        simulationDays: DAYS_PER_MONTH,
-      });
+    const {
+      completedChargingEvents,
+      energyConsumedPerPointPerHour,
+      chargingEventsPerPointPerHour,
+      maxPowerDemandPerPointPerHour,
+    } = simulateCharging({
+      numChargePoints,
+      multiplier,
+      carConsumption,
+      chargingPower,
+      simulationDays: DAYS_PER_MONTH,
+    });
 
     // Process simulation data
     const totalEnergy = energyConsumedPerPointPerHour
@@ -42,7 +51,10 @@ export default function SimulationForm({
     // Update state
     setTotalEnergyCharged(totalEnergy);
     setTotalChargingEvents(eventsPerMonth);
+
     setEnergyConsumedPerPointPerHour(energyConsumedPerPointPerHour);
+    setChargingEventsPerPointPerHour(chargingEventsPerPointPerHour);
+    setMaxPowerDemandPerPointPerHour(maxPowerDemandPerPointPerHour);
   }
 
   return (

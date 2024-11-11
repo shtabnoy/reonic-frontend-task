@@ -45,6 +45,16 @@ export default function simulateCharging({
     HOURS_PER_DAY,
     numChargePoints
   );
+  const chargingEventsPerPointPerHour = generate3DArray(
+    simulationDays,
+    HOURS_PER_DAY,
+    numChargePoints
+  );
+  const maxPowerDemandPerPointPerHour = generate3DArray(
+    simulationDays,
+    HOURS_PER_DAY,
+    numChargePoints
+  );
 
   energyConsumedPerPointPerHour.forEach((day, dayIdx) => {
     day.forEach((hour, hourIdx) => {
@@ -60,11 +70,17 @@ export default function simulateCharging({
           const charge = Math.min(chargingPower, remainingCharge[cpIdx]);
           energyConsumedPerPointPerHour[dayIdx][hourIdx][cpIdx] = charge;
           remainingCharge[cpIdx] -= charge;
+          chargingEventsPerPointPerHour[dayIdx][hourIdx][cpIdx]++;
         }
 
         if (remainingCharge[cpIdx] === 0) {
           completedChargingEvents[dayIdx]++;
         }
+
+        maxPowerDemandPerPointPerHour[dayIdx][hourIdx][cpIdx] = Math.max(
+          maxPowerDemandPerPointPerHour[dayIdx][hourIdx][cpIdx],
+          energyConsumedPerPointPerHour[dayIdx][hourIdx][cpIdx]
+        );
       });
     });
   });
@@ -72,5 +88,7 @@ export default function simulateCharging({
   return {
     completedChargingEvents,
     energyConsumedPerPointPerHour,
+    chargingEventsPerPointPerHour,
+    maxPowerDemandPerPointPerHour,
   };
 }

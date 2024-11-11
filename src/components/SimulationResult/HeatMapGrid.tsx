@@ -1,12 +1,26 @@
+import { HeatmapData, ViewMode } from '../../types';
 import { getHeatMapColor } from '../../utils';
 import { DAYS_PER_MONTH } from '../../utils/common';
 
+function getTitle(viewMode: ViewMode) {
+  switch (viewMode) {
+    case ViewMode.Events:
+      return 'Number of Charging Events per Charge Point';
+    case ViewMode.MaxPower:
+      return 'Max Power Demand per Charge Point';
+    default:
+      return 'Energy Consumed per Charge Point';
+  }
+}
+
 interface HeatMapGridProps {
-  heatMapData: number[][];
+  heatMapData: HeatmapData;
   numChargingPoints: number;
+  viewMode: ViewMode;
 }
 
 export default function HeatMapGrid({
+  viewMode,
   numChargingPoints,
   heatMapData,
 }: HeatMapGridProps) {
@@ -23,9 +37,7 @@ export default function HeatMapGrid({
 
   return (
     <>
-      <h3 className="text-xl font-bold mt-8 mb-2">
-        Energy Consumed per Charge Point
-      </h3>
+      <h3 className="text-xl font-bold mt-8 mb-2">{getTitle(viewMode)}</h3>
       <div className="text-xs sm:text-base overflow-auto">
         <table className="border-spacing-1 border-separate w-full">
           <thead>
@@ -50,7 +62,7 @@ export default function HeatMapGrid({
                       backgroundColor: getHeatMapColor(value, maxValue),
                     }}
                   >
-                    {`${value} kW`}
+                    {`${value}${viewMode === ViewMode.Events ? '' : ' kW'}`}
                   </td>
                 ))}
               </tr>

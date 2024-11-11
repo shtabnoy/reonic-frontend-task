@@ -1,23 +1,37 @@
+import { useState } from 'react';
 import { getHeatMapData } from '../../utils/heatmap';
 import HeatMapGrid from './HeatMapGrid';
 import Summary from './Summary';
+import ViewModeComponent from './ViewMode';
+import { SimulationData, ViewMode } from '../../types';
 
 interface SimulationResultProps {
   totalEnergyCharged: number;
   totalChargingEvents: number;
-  energyConsumedPerPointPerHour: number[][][];
+  energyConsumedPerPointPerHour: SimulationData;
+  chargingEventsPerPointPerHour: SimulationData;
+  maxPowerDemandPerPointPerHour: SimulationData;
 }
 
 export default function SimulationResult({
   totalEnergyCharged,
   totalChargingEvents,
   energyConsumedPerPointPerHour,
+  chargingEventsPerPointPerHour,
+  maxPowerDemandPerPointPerHour,
 }: SimulationResultProps) {
+  const [viewMode, setViewMode] = useState<ViewMode>(ViewMode.Energy);
+
   if (totalEnergyCharged === 0) {
     return null;
   }
 
-  const heatMapData = getHeatMapData({ energyConsumedPerPointPerHour });
+  const heatMapData = getHeatMapData({
+    viewMode,
+    energyConsumedPerPointPerHour,
+    chargingEventsPerPointPerHour,
+    maxPowerDemandPerPointPerHour,
+  });
 
   return (
     <div className="mt-8">
@@ -26,9 +40,14 @@ export default function SimulationResult({
         totalEnergyCharged={totalEnergyCharged}
         totalChargingEvents={totalChargingEvents}
       />
+      <ViewModeComponent
+        viewMode={viewMode}
+        handleViewModeChange={setViewMode}
+      />
       <HeatMapGrid
+        viewMode={viewMode}
         heatMapData={heatMapData}
-        numChargingPoints={energyConsumedPerPointPerHour[0]?.[0].length}
+        numChargingPoints={energyConsumedPerPointPerHour[0][0].length}
       />
     </div>
   );

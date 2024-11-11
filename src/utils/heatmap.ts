@@ -1,3 +1,5 @@
+import { SimulationData, ViewMode } from '../types';
+
 // heat map with gradient color from white to red-500
 export const START_COLOR_RGB = [255, 255, 255];
 export const END_COLOR_RGB = [239, 68, 68];
@@ -17,11 +19,18 @@ export function getHeatMapColor(value: number, max: number): string {
   return `rgb(${r}, ${g}, ${b})`;
 }
 
-const aggregateDailyData = (data: number[][][] = []) => {
+const aggregateDailyData = (
+  data: SimulationData = [],
+  isMax: boolean = false
+) => {
   return data.map((day) =>
     day.reduce((acc, hour) => {
       hour.forEach((val, cpIdx) => {
-        acc[cpIdx] = (acc[cpIdx] || 0) + val;
+        if (isMax) {
+          acc[cpIdx] = Math.max(acc[cpIdx] || 0, val);
+        } else {
+          acc[cpIdx] = (acc[cpIdx] || 0) + val;
+        }
       });
       return acc;
     }, [])
@@ -29,11 +38,30 @@ const aggregateDailyData = (data: number[][][] = []) => {
 };
 
 interface HeatmapDataProps {
-  energyConsumedPerPointPerHour: number[][][];
+  viewMode: ViewMode;
+  energyConsumedPerPointPerHour: SimulationData;
+  chargingEventsPerPointPerHour: SimulationData;
+  maxPowerDemandPerPointPerHour: SimulationData;
 }
 
 export function getHeatMapData({
+  viewMode,
   energyConsumedPerPointPerHour = [],
+  chargingEventsPerPointPerHour = [],
+  maxPowerDemandPerPointPerHour = [],
 }: HeatmapDataProps): number[][] {
-  return aggregateDailyData(energyConsumedPerPointPerHour);
+  let data;
+
+  switch (viewMode) {
+    case ViewMode.Events:
+      data = chargingEventsPerPointPerHour;
+      break;
+    case ViewMode.MaxPower:
+      data = maxPowerDemandPerPointPerHour;
+      break;
+    default:
+      data = energyConsumedPerPointPerHour;
+  }
+
+  return aggregateDailyData(data, viewMode === ViewMode.MaxPower);
 }
