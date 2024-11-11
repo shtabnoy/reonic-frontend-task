@@ -1,6 +1,14 @@
+import { SimulationForm, SimulationResult } from './components';
+
 function App() {
   return (
-    <div className="text-3xl font-bold underline">Hello, Reonic Task!</div>
+    <div className="container mx-auto p-4">
+      <h1 className="text-3xl font-bold mb-4">
+        Electric Car Charging Simulation
+      </h1>
+      <SimulationForm />
+      <SimulationResult />
+    </div>
   );
 }
 
