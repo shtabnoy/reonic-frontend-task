@@ -1,7 +1,17 @@
 import { useState } from 'react';
 import RangeInput from './RangeInput';
+import { simulateCharging } from '../../utils';
+import { DAYS_PER_MONTH } from '../../utils/common';
 
-export default function SimulationForm() {
+interface SimulationFormProps {
+  setTotalEnergyCharged: (value: number) => void;
+  setTotalChargingEvents: (value: number) => void;
+}
+
+export default function SimulationForm({
+  setTotalEnergyCharged,
+  setTotalChargingEvents,
+}: SimulationFormProps) {
   const [numChargePoints, setNumChargePoints] = useState(4);
   const [multiplier, setMultiplier] = useState(100);
   const [carConsumption, setCarConsumption] = useState(18);
@@ -9,7 +19,27 @@ export default function SimulationForm() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    console.log('Submit');
+
+    // Simulate
+    const { completedChargingEvents, energyConsumedPerPointPerHour } =
+      simulateCharging({
+        numChargePoints,
+        multiplier,
+        carConsumption,
+        chargingPower,
+        simulationDays: DAYS_PER_MONTH,
+      });
+
+    // Process simulation data
+    const totalEnergy = energyConsumedPerPointPerHour
+      .flat(2)
+      .reduce((acc, val) => acc + val, 0);
+    const eventsPerDay = completedChargingEvents;
+    const eventsPerMonth = eventsPerDay.reduce((acc, val) => acc + val, 0);
+
+    // Update state
+    setTotalEnergyCharged(totalEnergy);
+    setTotalChargingEvents(eventsPerMonth);
   }
 
   return (

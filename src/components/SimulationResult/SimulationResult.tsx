@@ -1,10 +1,14 @@
-import { useState } from 'react';
 import Summary from './Summary';
 
-export default function SimulationResult() {
-  const [totalEnergyCharged] = useState(100);
-  const [totalChargingEvents] = useState(100);
+interface SimulationResultProps {
+  totalEnergyCharged: number;
+  totalChargingEvents: number;
+}
 
+export default function SimulationResult({
+  totalEnergyCharged,
+  totalChargingEvents,
+}: SimulationResultProps) {
   return (
     <div className="mt-8">
       <h2 className="text-2xl font-bold mb-4">Simulation Result</h2>
