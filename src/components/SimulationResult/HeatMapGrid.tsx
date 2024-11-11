@@ -1,6 +1,6 @@
-import { HeatmapData, ViewMode } from '../../types';
+import { HeatmapData, TimeAggregation, ViewMode } from '../../types';
 import { getHeatMapColor } from '../../utils';
-import { DAYS_PER_MONTH } from '../../utils/common';
+import { DAYS_PER_MONTH, HOURS_PER_DAY } from '../../utils/common';
 
 function getTitle(viewMode: ViewMode) {
   switch (viewMode) {
@@ -17,21 +17,41 @@ interface HeatMapGridProps {
   heatMapData: HeatmapData;
   numChargingPoints: number;
   viewMode: ViewMode;
+  timeAggregation: TimeAggregation;
 }
 
 export default function HeatMapGrid({
   viewMode,
   numChargingPoints,
   heatMapData,
+  timeAggregation,
 }: HeatMapGridProps) {
   const xLabels = Array.from(
     { length: numChargingPoints },
     (_, i) => `CP ${i + 1}`
   );
-  const yLabels: string[] = Array.from(
-    { length: DAYS_PER_MONTH },
-    (_, i) => `Day ${i + 1}`
-  );
+  let yLabels: string[] = [];
+
+  switch (timeAggregation) {
+    case TimeAggregation.Daily:
+      yLabels = Array.from(
+        { length: HOURS_PER_DAY },
+        (_, i) => `Hour ${i + 1}`
+      );
+      break;
+    case TimeAggregation.Weekly:
+      yLabels = Array.from(
+        { length: Math.ceil(DAYS_PER_MONTH / 7) },
+        (_, i) => `Week ${i + 1}`
+      );
+      break;
+    default:
+      yLabels = Array.from(
+        { length: DAYS_PER_MONTH },
+        (_, i) => `Day ${i + 1}`
+      );
+      break;
+  }
 
   const maxValue = Math.max(...heatMapData.flat());
 

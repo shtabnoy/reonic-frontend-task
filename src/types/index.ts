@@ -4,5 +4,11 @@ export enum ViewMode {
   MaxPower,
 }
 
+export enum TimeAggregation {
+  Monthly,
+  Weekly,
+  Daily,
+}
+
 export type HeatmapData = number[][];
 export type SimulationData = number[][][];

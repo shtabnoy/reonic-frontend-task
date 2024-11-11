@@ -25,7 +25,7 @@ export default function generateChargingEvents(
   multiplier: number,
   simulationDays: number
 ): boolean[][][] {
-  const arrivalProbability = 0.1 * (multiplier / 100);
+  const arrivalProbability = 0.2 * (multiplier / 100);
 
   const chargingEvents = Array.from({ length: simulationDays }, () =>
     Array.from({ length: HOURS_PER_DAY }, () =>

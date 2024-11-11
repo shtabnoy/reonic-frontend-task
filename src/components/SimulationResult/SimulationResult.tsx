@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { getHeatMapData } from '../../utils/heatmap';
 import HeatMapGrid from './HeatMapGrid';
-import Summary from './Summary';
+import SummaryComponent from './Summary';
 import ViewModeComponent from './ViewMode';
-import { SimulationData, ViewMode } from '../../types';
+import { SimulationData, TimeAggregation, ViewMode } from '../../types';
+import TimeAggregationComponent from './TimeAggregation';
+import DaySelectorComponent from './DaySelector';
 
 interface SimulationResultProps {
   totalEnergyCharged: number;
@@ -21,6 +23,10 @@ export default function SimulationResult({
   maxPowerDemandPerPointPerHour,
 }: SimulationResultProps) {
   const [viewMode, setViewMode] = useState<ViewMode>(ViewMode.Energy);
+  const [timeAggregation, setTimeAggregation] = useState<TimeAggregation>(
+    TimeAggregation.Monthly
+  );
+  const [selectedDay, setSelectedDay] = useState<number>(0);
 
   if (totalEnergyCharged === 0) {
     return null;
@@ -28,6 +34,8 @@ export default function SimulationResult({
 
   const heatMapData = getHeatMapData({
     viewMode,
+    timeAggregation,
+    selectedDay,
     energyConsumedPerPointPerHour,
     chargingEventsPerPointPerHour,
     maxPowerDemandPerPointPerHour,
@@ -36,7 +44,7 @@ export default function SimulationResult({
   return (
     <div className="mt-8">
       <h2 className="text-2xl font-bold mb-4">Simulation Result</h2>
-      <Summary
+      <SummaryComponent
         totalEnergyCharged={totalEnergyCharged}
         totalChargingEvents={totalChargingEvents}
       />
@@ -44,8 +52,19 @@ export default function SimulationResult({
         viewMode={viewMode}
         handleViewModeChange={setViewMode}
       />
+      <TimeAggregationComponent
+        timeAggregation={timeAggregation}
+        handleTimeAggregationChange={setTimeAggregation}
+      />
+      {timeAggregation === TimeAggregation.Daily && (
+        <DaySelectorComponent
+          selectedDay={selectedDay}
+          handleDayChange={setSelectedDay}
+        />
+      )}
       <HeatMapGrid
         viewMode={viewMode}
+        timeAggregation={timeAggregation}
         heatMapData={heatMapData}
         numChargingPoints={energyConsumedPerPointPerHour[0][0].length}
       />
